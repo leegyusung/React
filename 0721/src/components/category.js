@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { NavLink } from 'react-router-dom';
 
 const categories = [
@@ -32,7 +32,8 @@ const categories = [
         test: '技術'
     }
 ]
-const CategoriesBlock = styled.div`
+
+const CategoryBlock = styled.div`
   display: flex;
   padding: 1rem;
   width: 768px;
@@ -41,8 +42,7 @@ const CategoriesBlock = styled.div`
     width: 100%;
     overflow-x: auto;
   }
-`;
-
+`
 const Category = styled(NavLink)`
   font-size: 1.125rem;
   cursor: pointer;
@@ -54,30 +54,34 @@ const Category = styled(NavLink)`
   &:hover {
     color: #495057;
   }
-  &.active{
-    font-weight:600 ;
+
+ &.active{
+    font-weight:600;
     border-bottom: 2px solid #22b8cf;
     color: #22b8cf;
     &:hover{
         color: #3bc9db;
     }
-}
- 
+    }
+
   & + & {
     margin-left: 2rem;
   }
 `;
-const Categories = () => {
+
+const category = () => {
     return (
-        <CategoriesBlock>
-            {categories.map((categorie) => (
-                <Category key={categorie.name}
-                    activeClassName='active'
-                    exact={categorie.name === 'all'}
-                    to={categorie.name === 'all' ? '/' : `${categorie.name}`}>{categorie.test}</Category>
-            ))}
-        </CategoriesBlock>
+        <CategoryBlock>
+            {categories.map(i =>
+                <Category key={i.name}
+                    activeClassName="active"
+                    exact={i.name === 'all'}
+                    to={i.name === 'all' ? '/' : `/${i.name}`}>
+                    {i.test}
+                </Category>)
+            }
+        </CategoryBlock >
     );
 };
 
-export default Categories;
+export default category;

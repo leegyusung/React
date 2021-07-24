@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import NewsItem from './NewsItem';
-import styled from 'styled-components';
+import Newitem from './newItem';
 import axios from 'axios';
+import styled from 'styled-components';
+
 
 const NewsItemBlock = styled.div`
  box-sizing:border-box;
@@ -16,17 +17,19 @@ const NewsItemBlock = styled.div`
  }
 `;
 
-const NewList = ({ category }) => {
-    const [articles, setArticles] = useState(null);
+const Newitems = ({ category }) => {
+    const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const query = category === "all" ? '' : `&category=${category}`;
-                const result = await axios.get(`https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=3178b9e05d9e4cb18f2e48dd90693d2c`);
-                setArticles(result.data.articles);
+                const query = category === 'all' ? '' : `&category=${category}`;
+
+                const response = await axios.get(`https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=3178b9e05d9e4cb18f2e48dd90693d2c`);
+
+                setData(response.data.articles);
             } catch (error) {
                 console.log(error);
             }
@@ -36,20 +39,21 @@ const NewList = ({ category }) => {
     }, [category]);
 
     if (loading) {
-        return <div>読み込み中。。。</div>
+        return <div>대기 중...</div>
     }
-    if (!articles) {
-        return null;
+    if (data === null) {
+        return <data>기사가 없습니다.</data>
     }
+
     return (
         <div>
             <NewsItemBlock>
-                {articles.map(article => (
-                    <NewsItem key={article.url} article={article}></NewsItem>
+                {data.map(article => (
+                    <Newitem key={article.url} article={article}></Newitem>
                 ))}
             </NewsItemBlock>
         </div>
     );
 };
 
-export default NewList;
+export default Newitems;
