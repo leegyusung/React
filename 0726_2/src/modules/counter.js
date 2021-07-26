@@ -1,5 +1,3 @@
-import { createAction } from 'redux-actions';
-
 const INCREASE = 'counter/INCREASE';
 const DECREASE = 'counter/DECREASE';
 
@@ -8,14 +6,14 @@ export const decrease = () => ({ type: DECREASE });
 
 const initialState = {
     number: 0
-};
+}
 
 function counter(state = initialState, action) {
     switch (action.type) {
         case INCREASE:
             return {
                 number: state.number + 1
-            };
+            }
         case DECREASE:
             if (state.number !== 0) {
                 return {
@@ -28,6 +26,4 @@ function counter(state = initialState, action) {
             return state;
     }
 }
-
-export default counter;
-
+export default counter

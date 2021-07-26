@@ -1,5 +1,3 @@
-import { createAction } from 'redux-actions';
-
 const INCREASE = 'counter/INCREASE';
 const DECREASE = 'counter/DECREASE';
 
