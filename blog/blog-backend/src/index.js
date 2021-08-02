@@ -1,22 +1,16 @@
 const Koa = require('koa');
 const Router = require('koa-router');
+const bodyParser = require('koa-bodyparser')
+
+const api = require('./api/posts')
+
 
 const app = new Koa();
 const router = new Router();
 
-router.get('/', ctx => {
-    ctx.body = 'Home'
-})
+router.use('/api/posts', api.routes())
 
-router.get('/about/:name', ctx => {
-    const { name } = ctx.params;
-    ctx.body = name ? `${name} 입니다` : '입니다'
-})
-
-router.get('/posts', ctx => {
-    const { id } = ctx.query;
-    ctx.body = id ? `${id} 입니다` : '포스트가 없습니다'
-})
+app.use(bodyParser())
 
 //app인스턴스에 라우터 적용
 app.use(router.routes()).use(router.allowedMethods());
