@@ -1,44 +1,73 @@
-const Router = require('koa-router');
+import Post from '../../models/post';
+import Joi from 'joi';
 
-const posts = new Router();
-
-let postId = 1;
-
-const postss = [
-    {
-        id: 1,
-        title: '제목',
-        body: '내용',
-    },
-]
-
-exports.write = ctx => {
-    const { title, body } = ctx.request.body;
-    postId += 1;
-    const post = {
-        id: postId,
-        title,
-        body
-    }
-    postss.push(post);
-    ctx.body = postss;
-}
-
-exports.list = ctx => {
-    ctx.body = postss;
-}
-
-exports.remove = ctx => {
-    const { id } = ctx.params;
-    const result = postss.findIndex(post => post.id.toString() === id);
-    if (result === -1) {
-        ctx.status = 404;
-        ctx.body = {
-            message: '포스트가 존재하지 않습니다'
-        }
+export const write = async ctx => {
+    const schema = Joi.object().keys({
+        title: Joi.string().required(),
+        body: Joi.string().required(),
+        tags: Joi.array()
+            .items(Joi.string())
+            .required(),
+    });
+    const result = schema.validate(ctx.request.body);
+    if (result.error) {
+        ctx.status = 400;
+        ctx.body = result.error;
         return;
     }
-    postss.splice(result, 1);
-    //ctx.status = 204;
-    ctx.body = `${id} 번째 포스트가 삭제되었습니다.`;
+
+    const { title, body, tags } = ctx.request.body;
+    const post = new Post({
+        title,
+        body,
+        tags
+    })
+    try {
+        await post.save();
+        ctx.body = post;
+    } catch (error) {
+        ctx.throw(500, error);
+    }
+}
+
+export const list = async ctx => {
+    try {
+        const result = await Post.find().exec();
+        ctx.body = result;
+    } catch (error) {
+        ctx.throw(500, error);
+    }
+}
+export const read = async ctx => {
+    const { id } = ctx.params;
+    try {
+        const result = await Post.findById(id).exec();
+        ctx.body = result;
+    } catch (error) {
+        ctx.throw(500, error);
+    }
+
+}
+
+export const remove = async ctx => {
+    const { id } = ctx.params;
+    try {
+        const result = await Post.findByIdAndRemove(id).exec();
+        ctx.status = 204;
+    } catch (error) {
+        ctx.throw(500, error);
+    }
+
+}
+
+export const update = async ctx => {
+    const { id } = ctx.params;
+    try {
+        const result = await Post.findByIdAndUpdate(id, ctx.request.body, {
+            new: true,
+        }).exec();
+        ctx.body = result
+    } catch (error) {
+        ctx.throw(500, error);
+    }
 }
